@@ -64,8 +64,7 @@
       text-align: center;
     }
 
-    .headline,
-    .subline {
+    .headline {
       margin: 0;
       font-size: clamp(1.35rem, 3.15vw, 2.62rem);
       font-weight: 400;
@@ -77,11 +76,6 @@
     .headline {
       align-self: end;
       transform: translateY(-0.2em);
-    }
-
-    .subline {
-      align-self: start;
-      transform: translateY(0.2em);
     }
 
     .face-area {
@@ -106,10 +100,11 @@
 
     .punch-hint {
       margin: 0;
-      font-size: clamp(0.8rem, 1.2vw, 1.05rem);
+      font-size: clamp(1rem, 1.55vw, 1.28rem);
       font-weight: 400;
       line-height: 1;
       opacity: 0.5;
+      transform: translateX(1.8rem);
     }
 
     .face-button:focus-visible {
@@ -248,7 +243,6 @@ noch in Arbeit...</h1>
       <p class="punch-hint">(box mich)</p>
     </div>
 
-    <p class="subline">bald gibts mehr</p>
   </main>
 
   <div class="preload" id="preload" aria-hidden="true"></div>
