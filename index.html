@@ -84,6 +84,12 @@
       transform: translateY(0.2em);
     }
 
+    .face-area {
+      display: grid;
+      justify-items: center;
+      gap: 0.35rem;
+    }
+
     .face-button {
       display: grid;
       place-items: center;
@@ -96,6 +102,14 @@
       appearance: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+    }
+
+    .punch-hint {
+      margin: 0;
+      font-size: clamp(0.8rem, 1.2vw, 1.05rem);
+      font-weight: 400;
+      line-height: 1;
+      opacity: 0.5;
     }
 
     .face-button:focus-visible {
@@ -227,9 +241,12 @@
     <h1 class="headline">Sorryyy, das Portfolio ist
 noch in Arbeit...</h1>
 
-    <button class="face-button" id="faceButton" type="button" aria-label="Gesicht schlagen">
-      <img class="face-image" id="faceImage" src="Images/Stages/base_01_ripped_paper.png" alt="">
-    </button>
+    <div class="face-area">
+      <button class="face-button" id="faceButton" type="button" aria-label="Gesicht schlagen">
+        <img class="face-image" id="faceImage" src="Images/Stages/base_01_ripped_paper.png" alt="">
+      </button>
+      <p class="punch-hint">(box mich)</p>
+    </div>
 
     <p class="subline">bald gibts mehr</p>
   </main>
