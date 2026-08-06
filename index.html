@@ -279,12 +279,10 @@ noch in Arbeit...</h1>
     const faceButton = document.querySelector("#faceButton");
     const faceImage = document.querySelector("#faceImage");
     const preload = document.querySelector("#preload");
-    const punchSounds = assets.sounds.map((path) => {
-      const audio = new Audio(path);
-      audio.preload = "auto";
-      audio.volume = 0.75;
-      return audio;
-    });
+    const audioState = {
+      context: null,
+      buffers: []
+    };
 
     let punchCount = 0;
     let stageIndex = 0;
@@ -302,16 +300,54 @@ noch in Arbeit...</h1>
       });
     }
 
-    function playPunchSound() {
-      const source = punchSounds[Math.floor(Math.random() * punchSounds.length)];
+    async function prepareSounds() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
 
-      if (!source) {
+      if (!AudioContext) {
         return;
       }
 
-      const sound = source.cloneNode();
-      sound.volume = source.volume;
+      audioState.context = new AudioContext();
+
+      const buffers = await Promise.all(assets.sounds.map(async (path) => {
+        const response = await fetch(path);
+        const arrayBuffer = await response.arrayBuffer();
+        return audioState.context.decodeAudioData(arrayBuffer);
+      }));
+
+      audioState.buffers = buffers;
+    }
+
+    function playFallbackSound() {
+      const path = assets.sounds[Math.floor(Math.random() * assets.sounds.length)];
+      const sound = new Audio(path);
+
+      sound.preload = "auto";
+      sound.volume = 1;
       sound.play().catch(() => {});
+    }
+
+    async function playPunchSound() {
+      const context = audioState.context;
+
+      if (!context || audioState.buffers.length === 0) {
+        playFallbackSound();
+        return;
+      }
+
+      if (context.state === "suspended") {
+        await context.resume();
+      }
+
+      const buffer = audioState.buffers[Math.floor(Math.random() * audioState.buffers.length)];
+      const source = context.createBufferSource();
+      const gain = context.createGain();
+
+      source.buffer = buffer;
+      gain.gain.value = 1;
+      source.connect(gain);
+      gain.connect(context.destination);
+      source.start();
     }
 
     function restartImage(path) {
@@ -369,12 +405,13 @@ noch in Arbeit...</h1>
     function punch() {
       clearTimers();
       punchCount += 1;
-      playPunchSound();
+      playPunchSound().catch(playFallbackSound);
       playPunch();
       scheduleReset();
     }
 
     preloadAssets();
+    prepareSounds().catch(() => {});
     faceButton.addEventListener("click", punch);
   </script>
 </body>
