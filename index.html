@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio in Arbeit</title>
+  <style>
+    @font-face {
+      font-family: "Favorit Mono";
+      src: url("Fonts/Favorit Mono/ABCFavoritMonoEdu-Regular.woff2") format("woff2"),
+        url("Fonts/Favorit Mono/ABCFavoritMonoEdu-Regular.woff") format("woff");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Favorit Mono";
+      src: url("Fonts/Favorit Mono/ABCFavoritMonoEdu-Bold.woff2") format("woff2"),
+        url("Fonts/Favorit Mono/ABCFavoritMonoEdu-Bold.woff") format("woff");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --page-blue: #0000ff;
+      --text: #ffffff;
+      --cursor-glove: url("Cursor/boxing_glove_cursor.png") 24 24, pointer;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      background: var(--page-blue);
+      color: var(--text);
+      cursor: var(--cursor-glove);
+      font-family: "Favorit Mono", "Courier New", monospace;
+    }
+
+    button,
+    a,
+    [role="button"] {
+      cursor: var(--cursor-glove);
+    }
+
+    .page {
+      display: grid;
+      grid-template-rows: minmax(118px, 25vh) minmax(280px, 47vh) minmax(118px, 28vh);
+      justify-items: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: clamp(26px, 5vh, 72px) clamp(18px, 5vw, 80px);
+      text-align: center;
+    }
+
+    .headline,
+    .subline {
+      margin: 0;
+      font-size: clamp(1.35rem, 3.15vw, 2.62rem);
+      font-weight: 400;
+      line-height: 1.16;
+      letter-spacing: 0;
+      white-space: pre-line;
+    }
+
+    .headline {
+      align-self: end;
+      transform: translateY(-0.2em);
+    }
+
+    .subline {
+      align-self: start;
+      transform: translateY(0.2em);
+    }
+
+    .face-button {
+      display: grid;
+      place-items: center;
+      width: min(48vh, 34vw, 440px);
+      min-width: 250px;
+      aspect-ratio: 1060 / 1080;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .face-button:focus-visible {
+      outline: 3px solid var(--text);
+      outline-offset: 10px;
+    }
+
+    .face-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform-origin: 50% 58%;
+      will-change: transform, filter;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .face-button:not(.is-punching):not(.is-resetting) .face-image {
+      animation: idle-jitter 2s step-end infinite;
+    }
+
+    .face-button.is-punching .face-image {
+      animation: punch-pop 260ms cubic-bezier(.2, .8, .25, 1) both;
+    }
+
+    .face-button.is-resetting .face-image {
+      animation: reset-wobble 760ms ease both;
+    }
+
+    .preload {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes punch-pop {
+      0% {
+        transform: scale(1) rotate(0);
+        filter: saturate(1);
+      }
+      35% {
+        transform: scale(1.045) rotate(-3deg);
+        filter: saturate(1.1) contrast(1.05);
+      }
+      100% {
+        transform: scale(1) rotate(0);
+        filter: saturate(1);
+      }
+    }
+
+    @keyframes idle-jitter {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      16.66% {
+        transform: translate(1px, -1px) rotate(0.35deg);
+      }
+      33.33% {
+        transform: translate(-1px, 1px) rotate(-0.28deg);
+      }
+      50% {
+        transform: translate(1px, 1px) rotate(0.18deg);
+      }
+      66.66% {
+        transform: translate(-1px, -1px) rotate(-0.35deg);
+      }
+      83.33% {
+        transform: translate(0, 1px) rotate(0.24deg);
+      }
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+    }
+
+    @keyframes reset-wobble {
+      0% {
+        transform: translateY(0) rotate(0);
+        filter: saturate(0.9);
+      }
+      32% {
+        transform: translateY(-10px) rotate(2.5deg);
+        filter: saturate(1.08);
+      }
+      68% {
+        transform: translateY(4px) rotate(-1.5deg);
+      }
+      100% {
+        transform: translateY(0) rotate(0);
+        filter: saturate(1);
+      }
+    }
+
+    @media (max-width: 700px) {
+      body {
+        overflow: auto;
+      }
+
+      .page {
+        grid-template-rows: minmax(105px, 24vh) minmax(250px, 44vh) minmax(100px, 24vh);
+        padding-block: 28px;
+      }
+
+      .face-button {
+        width: min(72vw, 370px);
+        min-width: 230px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" aria-label="Portfolio placeholder">
+    <h1 class="headline">Sorryyy, das Portfolio ist
+noch in Arbeit...</h1>
+
+    <button class="face-button" id="faceButton" type="button" aria-label="Gesicht schlagen">
+      <img class="face-image" id="faceImage" src="Images/Stages/base_01_ripped_paper.png" alt="">
+    </button>
+
+    <p class="subline">bald gibts mehr</p>
+  </main>
+
+  <div class="preload" id="preload" aria-hidden="true"></div>
+
+  <script>
+    const assets = {
+      stages: [
+        "Images/Stages/base_01_ripped_paper.png",
+        "Images/Stages/beaten_up_01_ripped_paper.png",
+        "Images/Stages/beaten_up_02_ripped_paper.png"
+      ],
+      punches: [
+        "Images/Punch/punch01_ripped_paper.png",
+        "Images/Punch/punch02_ripped_paper.png",
+        "Images/Punch/punch03_ripped_paper.png"
+      ],
+      cursor: "Cursor/boxing_glove_cursor.png",
+      sounds: [
+        "Sounds/punch.ogg"
+      ]
+    };
+
+    const config = {
+      punchesPerStage: 4,
+      punchDurationMs: 260,
+      resetDelayMs: 4000,
+      resetDurationMs: 760
+    };
+
+    const faceButton = document.querySelector("#faceButton");
+    const faceImage = document.querySelector("#faceImage");
+    const preload = document.querySelector("#preload");
+    const punchSounds = assets.sounds.map((path) => {
+      const audio = new Audio(path);
+      audio.preload = "auto";
+      audio.volume = 0.75;
+      return audio;
+    });
+
+    let punchCount = 0;
+    let stageIndex = 0;
+    let punchTimer = 0;
+    let resetDelayTimer = 0;
+    let resetAnimationTimer = 0;
+
+    function preloadAssets() {
+      const paths = [...assets.stages, ...assets.punches, assets.cursor];
+
+      paths.forEach((path) => {
+        const image = new Image();
+        image.src = path;
+        preload.append(image);
+      });
+    }
+
+    function playPunchSound() {
+      const source = punchSounds[Math.floor(Math.random() * punchSounds.length)];
+
+      if (!source) {
+        return;
+      }
+
+      const sound = source.cloneNode();
+      sound.volume = source.volume;
+      sound.play().catch(() => {});
+    }
+
+    function restartImage(path) {
+      faceImage.removeAttribute("src");
+      void faceImage.offsetWidth;
+      faceImage.src = path;
+    }
+
+    function getStageForPunchCount(count) {
+      return Math.min(
+        Math.floor(count / config.punchesPerStage),
+        assets.stages.length - 1
+      );
+    }
+
+    function showStage(index) {
+      stageIndex = index;
+      restartImage(assets.stages[stageIndex]);
+    }
+
+    function clearTimers() {
+      window.clearTimeout(punchTimer);
+      window.clearTimeout(resetDelayTimer);
+      window.clearTimeout(resetAnimationTimer);
+    }
+
+    function playPunch() {
+      const punchIndex = Math.floor(Math.random() * assets.punches.length);
+
+      faceButton.classList.remove("is-punching", "is-resetting");
+      void faceButton.offsetWidth;
+      restartImage(assets.punches[punchIndex]);
+      faceButton.classList.add("is-punching");
+
+      punchTimer = window.setTimeout(() => {
+        faceButton.classList.remove("is-punching");
+        showStage(getStageForPunchCount(punchCount));
+      }, config.punchDurationMs);
+    }
+
+    function scheduleReset() {
+      resetDelayTimer = window.setTimeout(() => {
+        faceButton.classList.remove("is-punching");
+        faceButton.classList.add("is-resetting");
+        showStage(0);
+
+        resetAnimationTimer = window.setTimeout(() => {
+          punchCount = 0;
+          faceButton.classList.remove("is-resetting");
+          showStage(0);
+        }, config.resetDurationMs);
+      }, config.resetDelayMs);
+    }
+
+    function punch() {
+      clearTimers();
+      punchCount += 1;
+      playPunchSound();
+      playPunch();
+      scheduleReset();
+    }
+
+    preloadAssets();
+    faceButton.addEventListener("click", punch);
+  </script>
+</body>
+</html>
